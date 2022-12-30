@@ -44,11 +44,7 @@ fn main() {
     let lines = io::stdin().lines();
 
     for line in lines {
-        if line.is_err() {
-            println!("Failed to read line from STDIN..");
-            continue;
-        }
-        let line_text = line.unwrap().to_lowercase();
+        let line_text = line.expect("Failed to read from STDIN").to_lowercase();
 
         match check_for_reflect(line_text.as_str()) {
             Some(reflect_type) => {
