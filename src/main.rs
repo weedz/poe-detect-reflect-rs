@@ -30,7 +30,7 @@ fn show_notification(notification_summary: &str) -> Option<notify_rust::Notifica
 
 fn sound_alert(sink: &Sink) {
     if sink.empty() {
-        let bytes = include_bytes!("assets/warning.wav");
+        let bytes = include_bytes!("assets/warning.ogg");
         let source = rodio::Decoder::new(Cursor::new(bytes)).unwrap();
         sink.append(source);
     }
