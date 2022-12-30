@@ -6,11 +6,13 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+notify-rust = { version = "4.6.0", default-features = false, features = ["d"] }
+rodio = { version = "0.16.0", default-features = false, features = ["wav"] }
 
 [profile.release]
 opt-level = "s"
 overflow-checks = false
 strip = true
-lto = true
+lto = "fat"
 panic = "abort"
 codegen-units = 1
