@@ -4,7 +4,7 @@ use rodio::Sink;
 
 fn check_for_reflect(s: &str) -> Option<&str> {
     let m: Vec<_> = s.match_indices("monsters reflect ").collect();
-    match m.get(0) {
+    match m.first() {
         Some(x) => {
             let reflect_type = &s[x.0+17..];
             Some(reflect_type)
@@ -22,7 +22,8 @@ fn check_cannot_leech(s: &str) -> Option<bool> {
 
 fn show_notification(notification_summary: &str) -> Option<notify_rust::NotificationHandle> {
     Notification::new()
-        .summary(notification_summary)
+        .summary("MAP ALERT!")
+        .body(notification_summary)
         .timeout(5000)
         .show().ok()
 }
@@ -46,21 +47,16 @@ fn main() {
     for line in lines {
         let line_text = line.expect("Failed to read from STDIN").to_lowercase();
 
-        match check_for_reflect(line_text.as_str()) {
-            Some(reflect_type) => {
-                println!("Found reflect: '{}'", reflect_type);
-                show_notification(std::format!("Found reflect: '{}'", reflect_type).as_str());
-                sound_alert(&sink);
-            }
-            None => {}
+        if let Some(reflect_type) = check_for_reflect(line_text.as_str()) {
+            println!("Found reflect: '{}'", reflect_type);
+            show_notification(std::format!("Found reflect: '{}'", reflect_type).as_str());
+            sound_alert(&sink);
         }
-        match check_cannot_leech(line_text.as_str()) {
-            Some(_) => {
-                println!("Found 'cannot leech'");
-                show_notification("Found 'cannot leech'");
-                sound_alert(&sink);
-            }
-            None => {}
+
+        if check_cannot_leech(line_text.as_str()).is_some() {
+            println!("Found 'cannot leech'");
+            show_notification("Found 'cannot leech'");
+            sound_alert(&sink);
         }
     }
     sink.sleep_until_end();
